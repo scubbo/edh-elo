@@ -16,7 +16,7 @@ def create_app():
     app.config['SECRET_KEY'] = secret_key
 
     # TODO - support other database types 🙃
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', 'sqlite:///db.sqlite')
 
     db.init_app(app)
 

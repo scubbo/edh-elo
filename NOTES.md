@@ -4,7 +4,7 @@
 - [X] Basic Player Definition
 - [ ] Basic Deck Definition
 - [X] Figure out how to return JSON or html (`render_template`)
-- [ ] Basic testing
+- [X] Basic testing
 - [ ] Swagger API
 - [ ] Local development tool to clear/seed database
 ...

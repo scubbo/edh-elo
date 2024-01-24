@@ -20,7 +20,12 @@ def create_player():
 
 @main.route("/player/<player_id>")
 def get_player(player_id: str):
-    player_data = _jsonify(db.session.get(Player, int(player_id)))
+    player_from_db = db.session.get(Player, int(player_id))
+    if not player_from_db:
+        return 'Not Found', 404
+
+    player_data = _jsonify(player_from_db)
+
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
         return player_data
@@ -34,4 +39,4 @@ def get_player(player_id: str):
 # extend?
 # (Probably not, as we'd still need to explicitly call it - it wouldn't be implicitly called _by_ Flask)
 def _jsonify(o):
-    return {k: v for (k, v) in o.__dict__.items() if k is not '_sa_instance_state'}
+    return {k: v for (k, v) in o.__dict__.items() if k != '_sa_instance_state'}
