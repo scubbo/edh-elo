@@ -11,7 +11,7 @@ class Deck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
     description = db.Column(db.String)
-    owner = db.Column(db.String, db.ForeignKey(Player.__table__.c.id), nullable=False, )
+    owner = db.Column(db.String, db.ForeignKey(Player.__table__.c.id), nullable=False)
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
