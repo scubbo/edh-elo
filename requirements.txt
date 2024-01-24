@@ -2,4 +2,5 @@ Flask
 Flask-SQLAlchemy
 flasgger
 flask-login
+pytest
 ruff
