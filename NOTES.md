@@ -5,6 +5,8 @@
 - [ ] Basic Deck Definition
 - [X] Figure out how to return JSON or html (`render_template`)
 - [X] Basic testing
+- [ ] ruff
+- [ ] GitHub Actions for tests and linters
 - [ ] Swagger API
 - [ ] Local development tool to clear/seed database
 ...

@@ -1,5 +1,6 @@
 from . import db
 
+
 # Note that a `Player` is "someone who plays in the Pod", whereas `User` (which will be implemented later) is "a user of
 # this system". While all Users will _probably_ be Players, they do not have to be - and, it is likely that several
 # Players will not be Users (if they don't register to use the system).
@@ -7,11 +8,13 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
+
 class Deck(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), nullable=False)
     description = db.Column(db.String)
     owner = db.Column(db.String, db.ForeignKey(Player.__table__.c.id), nullable=False)
+
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)

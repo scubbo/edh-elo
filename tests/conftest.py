@@ -9,16 +9,17 @@ from app import create_app
 
 # https://flask.palletsprojects.com/en/2.3.x/testing/
 
+
 @pytest.fixture()
 def app_fixture():
     # Start afresh!
-    test_database_name = 'testing-db.sqlite'
-    database_location = pathlib.Path('instance').joinpath(test_database_name)
+    test_database_name = "testing-db.sqlite"
+    database_location = pathlib.Path("instance").joinpath(test_database_name)
     if database_location.exists():
         database_location.unlink()
 
-    os.environ['DATABASE_URI'] = f'sqlite:///{test_database_name}'
-    os.environ['SECRET_KEY'] = 'testing-secret-key'
+    os.environ["DATABASE_URI"] = f"sqlite:///{test_database_name}"
+    os.environ["SECRET_KEY"] = "testing-secret-key"
 
     app = create_app()
     # app.config.update({
@@ -31,9 +32,11 @@ def app_fixture():
 
     # clean up / reset resources here
 
+
 @pytest.fixture()
 def client(app_fixture):
     return app_fixture.test_client()
+
 
 @pytest.fixture()
 def runner(app_fixture):
