@@ -7,20 +7,93 @@ main = Blueprint("main", __name__)
 
 @main.route("/")
 def index():
+    """Main Page
+    ---
+    responses:
+      200:
+        description: A friendly greeting
+        schema:
+          type: string
+    """
     return "Hello, World - but new!"
 
 
 @main.route("/player", methods=["POST"])
 def create_player():
+    """Create a Player
+    ---
+    requestBody:
+      description: Payload describing the player
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Jim Bloggs
+            required:
+              - name
+    responses:
+      201:
+        description: Payload containing Player Id
+        schema:
+          type: object
+          properties:
+            id:
+              type: number
+          required:
+            - id
+    tags:
+      - player
+    """
     data = request.json
     player = Player(name=data["name"])
     db.session.add(player)
     db.session.commit()
-    return {"id": player.id}
+    return {"id": player.id}, 201
 
 
 @main.route("/player/<player_id>")
 def get_player(player_id: str):
+    """Get a Player
+    ---
+    parameters:
+      - name: player_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: The Player Id
+    requestBody:
+      content:
+        application/json:
+          schema: {}
+        text/html:
+          schema: {}
+    responses:
+      200:
+        description: Payload describing player
+        content:
+          application/json:
+            schema:
+              id: Player
+          text/html:
+            schema:
+              type: string
+      404:
+        description: Player not found
+        content:
+            application/json: {}
+            text/html: {}
+    tags:
+      - player
+    """
+    # TODO - actually, the schema above doesn't reference the `Player` class as I'd hoped it would.
+    # The docs at https://github.com/flasgger/flasgger#extracting-definitions are not super-clear.
+    # _Maybe_ what I'm trying to do is not possible?
     player_from_db = db.session.get(Player, int(player_id))
     if not player_from_db:
         return "Not Found", 404
@@ -36,6 +109,29 @@ def get_player(player_id: str):
 
 @main.route("/player/<player_id>", methods=["DELETE"])
 def delete_player(player_id: str):
+    """Delete a Player
+    ---
+    parameters:
+      - name: player_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: The Player Id
+    requestBody:
+      content:
+        application/json:
+          schema: {}
+    responses:
+      204:
+        description: Empty
+        content:
+          application/json:
+            schema: {}
+    tags:
+      - player
+    """
     # Note - no checking that the player exists, because HTTP semantics specify
     # that `DELETE` should be idempotent.
     db.session.query(Player).filter(Player.id == int(player_id)).delete()
@@ -45,6 +141,43 @@ def delete_player(player_id: str):
 
 @main.route("/deck", methods=["POST"])
 def create_deck():
+    """Create a Deck
+    ---
+    requestBody:
+      description: Payload describing the deck
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: My First Deck
+              description:
+                type: string
+                example: Better than yours!
+              owner_id:
+                type: number
+                example: 1
+            required:
+              - name
+              - owner_id
+    responses:
+      201:
+        description: Payload containing Deck Id
+        schema:
+          type: object
+          properties:
+            id:
+              type: number
+          required:
+            - id
+      400:
+        description: Owner not found
+    tags:
+      - deck
+    """
     data = request.json
     owner_id = data["owner_id"]
 
@@ -58,11 +191,45 @@ def create_deck():
     db.session.add(deck)
     db.session.commit()
     print("Finished creating the deck!")
-    return {"id": deck.id}
+    return {"id": deck.id}, 201
 
 
 @main.route("/deck/<deck_id>")
 def get_deck(deck_id: str):
+    """Get a Deck
+    ---
+    parameters:
+      - name: deck_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: The Deck Id
+    requestBody:
+      content:
+        application/json:
+          schema: {}
+        text/html:
+          schema: {}
+    responses:
+      200:
+        description: Payload describing deck
+        content:
+          application/json:
+            schema:
+              id: Deck
+          text/html:
+            schema:
+              type: string
+      404:
+        description: Deck not found
+        content:
+            application/json: {}
+            text/html: {}
+    tags:
+      - deck
+    """
     deck_from_db = db.session.get(Deck, int(deck_id))
     if not deck_from_db:
         return "Not Found", 404
@@ -81,6 +248,29 @@ def get_deck(deck_id: str):
 
 @main.route("/deck/<deck_id>", methods=["DELETE"])
 def delete_deck(deck_id: str):
+    """Delete a Deck
+    ---
+    parameters:
+      - name: deck_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: The Deck Id
+    requestBody:
+      content:
+        application/json:
+          schema: {}
+    responses:
+      204:
+        description: Empty
+        content:
+          application/json:
+            schema: {}
+    tags:
+      - deck
+    """
     db.session.query(Deck).filter(Deck.id == int(deck_id)).delete()
     db.session.commit()
     return "", 204

@@ -12,7 +12,9 @@ def test_add_and_retrieve_player(client: FlaskClient):
     response = _json_get(client, "/player/1")
     assert response.status_code == 404
 
-    _json_post(client, "/player", {"name": "jason"})
+    create_player_response = _json_post(client, "/player", {"name": "jason"})
+    assert create_player_response.status_code == 201
+
     response_1 = _json_get(client, "/player/1")
     assert response_1.json["name"] == "jason"
 
@@ -34,13 +36,13 @@ def test_add_and_retrieve_deck(client: FlaskClient):
     assert invalid_owner_response.text == "Owner id 1 not found"
 
     create_jim_response = _json_post(client, "/player", {"name": "jim"})
-    assert create_jim_response.status_code == 200
+    assert create_jim_response.status_code == 201
     jim_id = create_jim_response.json["id"]
 
     create_deck_response = _json_post(
         client, "/deck", {"name": "Baby's First Deck", "owner_id": str(jim_id)}
     )
-    assert create_deck_response.status_code == 200
+    assert create_deck_response.status_code == 201
     # _Should_ always be 1, since we expect to start with an empty database, but why risk it?
     deck_id = create_deck_response.json["id"]
 

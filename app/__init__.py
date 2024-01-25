@@ -3,12 +3,15 @@ import sys
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flasgger import Swagger
 
 db = SQLAlchemy()
 
 
 def create_app():
     app = Flask(__name__)
+    app.config["SWAGGER"] = {"openapi": "3.0.2"}
+    swagger = Swagger(app)
 
     secret_key = os.environ.get("SECRET_KEY")
     if not secret_key:
