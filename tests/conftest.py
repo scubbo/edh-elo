@@ -2,6 +2,9 @@ import os
 import pathlib
 import pytest
 
+from flask import Flask
+from flask.testing import FlaskClient
+
 # TODO - this seems to be a "magic path" which makes fixtures available. Learn more about it by reading
 # https://stackoverflow.com/questions/34466027/what-is-conftest-py-for-in-pytest
 
@@ -11,7 +14,7 @@ from app import create_app
 
 
 @pytest.fixture()
-def app_fixture():
+def app_fixture() -> Flask:
     # Start afresh!
     test_database_name = "testing-db.sqlite"
     database_location = pathlib.Path("instance").joinpath(test_database_name)
@@ -34,7 +37,7 @@ def app_fixture():
 
 
 @pytest.fixture()
-def client(app_fixture):
+def client(app_fixture: Flask) -> FlaskClient:
     return app_fixture.test_client()
 
 

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from . import db
-from .models import Player
+from .models import Deck, Player
 
 main = Blueprint("main", __name__)
 
@@ -34,8 +34,56 @@ def get_player(player_id: str):
         return render_template("player_detail.html", **player_data)
 
 
-# TODO - implement a GET method - can it be a separate method, or must it be the same annotation with an `if method==`?
-# Time for testing, methinks!
+@main.route("/player/<player_id>", methods=["DELETE"])
+def delete_player(player_id: str):
+    # Note - no checking that the player exists, because HTTP semantics specify
+    # that `DELETE` should be idempotent.
+    db.session.query(Player).filter(Player.id == int(player_id)).delete()
+    db.session.commit()
+    return "", 204
+
+
+@main.route("/deck", methods=["POST"])
+def create_deck():
+    data = request.json
+    owner_id = data["owner_id"]
+
+    player_from_db = db.session.get(Player, int(owner_id))
+    if not player_from_db:
+        return f"Owner id {owner_id} not found", 400
+
+    deck = Deck(
+        name=data["name"], description=data.get("description"), owner_id=owner_id
+    )
+    db.session.add(deck)
+    db.session.commit()
+    print("Finished creating the deck!")
+    return {"id": deck.id}
+
+
+@main.route("/deck/<deck_id>")
+def get_deck(deck_id: str):
+    deck_from_db = db.session.get(Deck, int(deck_id))
+    if not deck_from_db:
+        return "Not Found", 404
+
+    deck_data = _jsonify(deck_from_db)
+
+    content_type = request.headers.get("Content-Type")
+    if content_type == "application/json":
+        return deck_data
+    else:  # Assume they want HTML
+        owner_data = db.session.get(Player, int(deck_data["owner_id"]))
+        return render_template(
+            "deck_detail.html", deck=deck_data, owner=_jsonify(owner_data)
+        )
+
+
+@main.route("/deck/<deck_id>", methods=["DELETE"])
+def delete_deck(deck_id: str):
+    db.session.query(Deck).filter(Deck.id == int(deck_id)).delete()
+    db.session.commit()
+    return "", 204
 
 
 # TODO - would this be better as a method on a class extending `db.Model` that the classes in `models.py` could then

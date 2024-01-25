@@ -2,4 +2,5 @@
 
 # Idempotent
 source .venv/bin/activate
-FLASK_APP=app SECRET_KEY=super-secret flask run
+# `--debug` enables live-refresh
+FLASK_APP=app SECRET_KEY=super-secret flask --debug run
