@@ -106,6 +106,34 @@ def get_player(player_id: str):
     else:  # Assume they want HTML
         return render_template("player_detail.html", **player_data)
 
+@main.route("/players")
+def list_players():
+    """List Players
+    ---
+    requestBody:
+      content:
+        application/json:
+          schema: {}
+    responses:
+      200:
+        description: Payload describing the players
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                    id: Player
+          text/html:
+            schema:
+              type: string
+    tags:
+      - player
+    """
+    players = db.session.query(Player)
+    return [_jsonify(p) for p in players]
+
 
 @main.route("/player/<player_id>", methods=["DELETE"])
 def delete_player(player_id: str):
