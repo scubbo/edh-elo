@@ -2,45 +2,31 @@ import os
 import pathlib
 import pytest
 
-from flask import Flask
-from flask.testing import FlaskClient
+from fastapi.testclient import TestClient
 
-# TODO - this seems to be a "magic path" which makes fixtures available. Learn more about it by reading
-# https://stackoverflow.com/questions/34466027/what-is-conftest-py-for-in-pytest
-
-from app import create_app
-
-# https://flask.palletsprojects.com/en/2.3.x/testing/
-
-
-@pytest.fixture()
-def app_fixture() -> Flask:
+def prime_database():
     # Start afresh!
-    test_database_name = "testing-db.sqlite"
-    database_location = pathlib.Path("instance").joinpath(test_database_name)
-    if database_location.exists():
-        database_location.unlink()
+    database_dir = "database"
+    db_dir_path = pathlib.Path(database_dir)
+    if not db_dir_path.exists():
+        db_dir_path.mkdir()
+    db_dir_path.chmod(0o777)
 
-    os.environ["DATABASE_URI"] = f"sqlite:///{test_database_name}"
-    os.environ["SECRET_KEY"] = "testing-secret-key"
+    test_database_name = "testing_database.db"
+    db_path = db_dir_path.joinpath(test_database_name)
 
-    app = create_app()
-    # app.config.update({
-    #     'TESTING': True
-    # })
+    if db_path.exists():
+        db_path.unlink()
 
-    # other setup can go here
+    print(f'Setting database_url using {db_path}')
+    os.environ['DATABASE_URL'] = f'sqlite:///{db_path}'
 
-    yield app
+prime_database()
 
-    # clean up / reset resources here
-
-
-@pytest.fixture()
-def client(app_fixture: Flask) -> FlaskClient:
-    return app_fixture.test_client()
-
+# This must be after `prime_database`, as the database initialization will happen
+# during the import, and must do so after the environment-var setting
+from app import app # noqa: E402
 
 @pytest.fixture()
-def runner(app_fixture):
-    return app_fixture.test_cli_runner()
+def test_client() -> TestClient:
+    return TestClient(app)

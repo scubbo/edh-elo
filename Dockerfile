@@ -42,10 +42,14 @@ USER appuser
 # Copy the source code into the container.
 COPY . .
 
+# Create writeable directory for database
+USER root
+RUN mkdir database
+RUN chmod 755 database
+RUN chown appuser:appuser database
+USER appuser
+
 # Expose the port that the application listens on.
-EXPOSE 5000
+EXPOSE 8000
 
-
-# Run the application. Note that this sets a hard-coded secret key, which is not secure - use proper secret generation
-# and management in production!
-CMD FLASK_APP=app SECRET_KEY=super-secret flask run --host=0.0.0.0
+CMD uvicorn app:app --host 0.0.0.0

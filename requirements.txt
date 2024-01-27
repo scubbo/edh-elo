@@ -1,6 +1,10 @@
-Flask
-Flask-SQLAlchemy
-flasgger
-flask-login
-pytest
+fastapi
+uvicorn
+sqlalchemy
+
+# Linting
 ruff
+
+# Testing
+httpx
+pytest
