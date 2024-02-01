@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from .database import Base
 
+
 class Player(Base):
     __tablename__ = "players"
 
@@ -10,6 +11,7 @@ class Player(Base):
     name = Column(String, nullable=False)
 
     decks = relationship("Deck", back_populates="owner")
+
 
 class Deck(Base):
     __tablename__ = "decks"

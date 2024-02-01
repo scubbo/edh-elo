@@ -13,9 +13,7 @@ class PlayerCreate(PlayerBase):
 class Player(PlayerBase):
     id: int
 
-    model_config = {
-        'from_attributes': True
-    }
+    model_config = {"from_attributes": True}
 
 
 class DeckBase(BaseModel):
@@ -31,6 +29,4 @@ class DeckCreate(DeckBase):
 class Deck(DeckBase):
     id: int
 
-    model_config = {
-        'from_attributes': True
-    }
+    model_config = {"from_attributes": True}

@@ -33,7 +33,7 @@ def test_add_and_retrieve_deck(test_client: TestClient):
         test_client, "/deck", {"name": "Baby's First Deck", "owner_id": 1}
     )
     assert invalid_owner_response.status_code == 400
-    assert invalid_owner_response.json()['detail'] == "Owner id 1 not found"
+    assert invalid_owner_response.json()["detail"] == "Owner id 1 not found"
 
     create_jim_response = _json_post(test_client, "/player", {"name": "jim"})
     assert create_jim_response.status_code == 201
@@ -60,12 +60,14 @@ def test_add_and_retrieve_deck(test_client: TestClient):
 
 
 def _json_get(c: TestClient, path: str) -> httpx.Response:
-    return c.get(f'/api{path}', headers={"Content-Type": "application/json"})
+    return c.get(f"/api{path}", headers={"Content-Type": "application/json"})
 
 
 def _json_post(c: TestClient, path: str, body: Mapping) -> httpx.Response:
-    return c.post(f'/api{path}', headers={"Content-Type": "application/json"}, json=body)
+    return c.post(
+        f"/api{path}", headers={"Content-Type": "application/json"}, json=body
+    )
 
 
 def _json_delete(c: TestClient, path: str) -> httpx.Response:
-    return c.delete(f'/api{path}', headers={"Content-Type": "application/json"})
+    return c.delete(f"/api{path}", headers={"Content-Type": "application/json"})

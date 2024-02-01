@@ -9,6 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 jinja_templates = Jinja2Templates(directory="app/templates")
 
+
 # TODO - would this be better as a method on a class extending `db.Model` that the classes in `models.py` could then
 # extend?
 # (Probably not, as we'd still need to explicitly call it - it wouldn't be implicitly called _by_ Flask)
