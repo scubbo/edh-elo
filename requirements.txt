@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 sqlalchemy
+Jinja2
 
 # Linting
 ruff
