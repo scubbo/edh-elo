@@ -50,6 +50,9 @@ def test_add_and_retrieve_deck(test_client: TestClient):
     assert get_deck_response.status_code == 200
     assert get_deck_response.json()["name"] == "Baby's First Deck"
 
+    # Very basic HTML testing
+    html_response = test_client.get(f"/deck/{deck_id}")
+    assert "owned by jim" in html_response.text
 
     # Cleanup
     delete_response = _json_delete(test_client, f"/deck/{deck_id}")
@@ -57,12 +60,12 @@ def test_add_and_retrieve_deck(test_client: TestClient):
 
 
 def _json_get(c: TestClient, path: str) -> httpx.Response:
-    return c.get(path, headers={"Content-Type": "application/json"})
+    return c.get(f'/api{path}', headers={"Content-Type": "application/json"})
 
 
 def _json_post(c: TestClient, path: str, body: Mapping) -> httpx.Response:
-    return c.post(path, headers={"Content-Type": "application/json"}, json=body)
+    return c.post(f'/api{path}', headers={"Content-Type": "application/json"}, json=body)
 
 
 def _json_delete(c: TestClient, path: str) -> httpx.Response:
-    return c.delete(path, headers={"Content-Type": "application/json"})
+    return c.delete(f'/api{path}', headers={"Content-Type": "application/json"})

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Create Player{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script src="/static/js/player_create.js"></script>
+{% endblock %}
+
+{% block content %}
+<label for="name">Player Name</label>
+<input type="text" name="name" id="name" />
+
+<input type="button" id="create_button" value="Submit"/>
+</form>
+{% endblock %}

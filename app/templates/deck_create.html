@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Create Deck{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script src="/static/js/deck_create.js"></script>
+{% endblock %}
+
+{% block content %}
+<label for="name">Deck Name</label>
+<input type="text" name="name" id="name" />
+
+<label for="description">Description (optional)</label>
+<input type="text" name="description" id="description" />
+
+
+<label for="owner_id">Owner</label>
+<select name="owner_id" id="owner_id">
+{% for player in players %}
+    <option value="{{ player.id }}">{{ player.name }}</option>
+{% endfor %}
+</select>
+<input type="button" id="create_button" value="Submit"/>
+</form>
+{% endblock %}
+

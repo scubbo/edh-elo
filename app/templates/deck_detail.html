@@ -5,10 +5,9 @@
     <title>Deck - {{ deck.name }}</title>
 </head>
 <body>
-    <h1>Hello World!</h1>
     <h2>This is the page for deck {{ deck.name }} with id {{ deck.id }}, owned by {{ owner.name }}</h2>
-    {% if description %}
-    <p>The description of the deck is: {{ description }}</p>
+    {% if deck.description %}
+    <p>The description of the deck is: {{ deck.description }}</p>
     {% endif %}
 </body>
 </html>

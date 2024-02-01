@@ -1,12 +1,14 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
-from .routers import decks, players
+from .routers import api_router, html_router
 from .sql.models import Base
 from .sql.database import engine
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-app.include_router(players.router)
-app.include_router(decks.router)
+app.include_router(api_router)
+app.include_router(html_router)
