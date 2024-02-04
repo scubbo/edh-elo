@@ -1,15 +1,16 @@
 # Development plan
 
-- [X] Basic Game Definition
 - [X] Basic Player Definition
 - [X] Basic Deck Definition
 - [X] Figure out how to return JSON or html (`render_template`)
 - [X] Basic testing
 - [X] ruff
 - [X] GitHub Actions for tests and linters
-- [ ] Basic List pages for entities
+- [X] Basic List pages for entities
 - [X] Swagger API
 - [ ] Local development tool to clear/seed database
+- [ ] CRUD APIs for Games
+- [ ] Load Game-history from file
 ...
 - [ ] Authentication (will need to link `user` table to `player`)
 ...
