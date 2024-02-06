@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game - {{ game.id }}</title>
+</head>
+<body>
+    <h2>This is the page for game with id {{ game.id }}, played on date {{ game.date }}</h2>
+    {% if deck.description %}
+    <p>The description of the game is: {{ game.description }}</p>
+    {% endif %}
+</body>
+</html>

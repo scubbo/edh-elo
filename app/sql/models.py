@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -35,6 +35,7 @@ class Game(Base):
     __tablename__ = "games"
 
     id = Column(Integer, primary_key=True)
+    date = Column(DateTime, nullable=False)
     deck_id_1 = Column(Integer, ForeignKey("decks.id"), nullable=False)
     deck_id_2 = Column(Integer, ForeignKey("decks.id"), nullable=False)
     deck_id_3 = Column(Integer, ForeignKey("decks.id"))

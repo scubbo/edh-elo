@@ -4,8 +4,6 @@ from .database import SessionLocal
 def prime_database():
     db = SessionLocal()
     win_types = db.query(models.WinType).all()
-    print('Win types are:')
-    print(win_types)
     if not win_types:
         db.add(models.WinType(name="Combat Damage"))
         db.add(models.WinType(name="Commander Damage"))

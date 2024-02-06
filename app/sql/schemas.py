@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -47,6 +47,7 @@ class WinType(WinTypeBase):
 
 
 class GameBase(BaseModel):
+    date: int
     deck_id_1: int
     deck_id_2: int
     deck_id_3: int

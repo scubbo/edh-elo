@@ -20,9 +20,6 @@ def list_players(skip: int = 0, limit: int = 100, db=Depends(get_db)):
     return crud.get_players(db, skip=skip, limit=limit)
 
 
-# TODO - https://fastapi.tiangolo.com/tutorial/path-params/#order-matters
-# suggests that putting this after `/list` should allow `/api/player/list` to properly
-# trigger `list_players`, but it doesn't.
 @api_router.get("/{player_id}", response_model=schemas.Player)
 def read_player(player_id: int, db=Depends(get_db)):
     db_player = crud.get_player_by_id(db, player_id)
