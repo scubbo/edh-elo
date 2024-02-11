@@ -10,7 +10,14 @@ from ..sql import crud, schemas
 from ..sql.database import get_db
 
 api_router = APIRouter(prefix="/game", tags=["game"])
-html_router = APIRouter(prefix="/game", include_in_schema=False)
+html_router = APIRouter(
+    prefix="/game",
+    include_in_schema=False,
+    default_response_class=HTMLResponse)
+
+########
+# API Routes
+########
 
 @api_router.post("/", response_model=schemas.Game, status_code=201)
 def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
@@ -35,6 +42,10 @@ def delete_game(game_id: str, db=Depends(get_db)):
     crud.delete_game_by_id(db, int(game_id))
 
 
+########
+# HTML Routes
+########
+
 @html_router.get("/create", response_class=HTMLResponse)
 def game_create_html(request: Request, db=Depends(get_db)):
     players = list_players(db=db)
@@ -55,7 +66,7 @@ def game_create_html(request: Request, db=Depends(get_db)):
 
 
 # TODO - pagination
-@html_router.get("/list", response_class=HTMLResponse)
+@html_router.get("/list")
 def games_html(request: Request, db=Depends(get_db)):
     games = list_games(db=db)
     return jinja_templates.TemplateResponse(
@@ -64,7 +75,7 @@ def games_html(request: Request, db=Depends(get_db)):
 
 
 # This must be after the static-path routes, lest it take priority over them
-@html_router.get("/{game_id}", response_class=HTMLResponse)
+@html_router.get("/{game_id}")
 def game_html(request: Request, game_id: str, db=Depends(get_db)):
     game_info = read_game(game_id, db)
     return jinja_templates.TemplateResponse(

@@ -7,7 +7,14 @@ from ..sql import crud, schemas
 from ..sql.database import get_db
 
 api_router = APIRouter(prefix="/player", tags=["player"])
-html_router = APIRouter(prefix="/player", include_in_schema=False)
+html_router = APIRouter(
+    prefix="/player",
+    include_in_schema=False,
+    default_response_class=HTMLResponse)
+
+########
+# API Routes
+########
 
 
 @api_router.post("/", response_model=schemas.Player, status_code=201)
@@ -33,13 +40,23 @@ def delete_player(player_id: str, db=Depends(get_db)):
     crud.delete_player_by_id(db, int(player_id))
 
 
-@html_router.get("/create", response_class=HTMLResponse)
+########
+# HTML Routes
+########
+
+@html_router.get("/create")
 def player_create_html(request: Request, db=Depends(get_db)):
     return jinja_templates.TemplateResponse(request, "players/create.html")
 
+@html_router.get("/list", response_class=HTMLResponse)
+def player_list_html(request: Request, db=Depends(get_db)):
+    players = list_players(db=db)
+    return jinja_templates.TemplateResponse(
+        request, "players/list.html", {"players": players})
+
 
 # This must be after the static-path routes, lest it take priority over them
-@html_router.get("/{player_id}", response_class=HTMLResponse)
+@html_router.get("/{player_id}")
 def player_html(request: Request, player_id: str, db=Depends(get_db)):
     player_info = read_player(player_id, db)
     return jinja_templates.TemplateResponse(

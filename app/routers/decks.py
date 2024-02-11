@@ -9,8 +9,15 @@ from ..sql.database import get_db
 from .players import list_players
 
 api_router = APIRouter(prefix="/deck", tags=["deck"])
-html_router = APIRouter(prefix="/deck", include_in_schema=False)
+html_router = APIRouter(
+    prefix="/deck",
+    include_in_schema=False,
+    default_response_class=HTMLResponse)
 
+
+########
+# API Routes
+########
 
 @api_router.post("/", response_model=schemas.Deck, status_code=201)
 def create_deck(deck: schemas.DeckCreate, db: Session = Depends(get_db)):
@@ -42,7 +49,11 @@ def delete_deck(deck_id: str, db=Depends(get_db)):
     crud.delete_deck_by_id(db, int(deck_id))
 
 
-@html_router.get("/create", response_class=HTMLResponse)
+########
+# HTML Routes
+########
+
+@html_router.get("/create")
 def deck_create_html(request: Request, db=Depends(get_db)):
     players = list_players(db=db)
     return jinja_templates.TemplateResponse(
@@ -51,7 +62,7 @@ def deck_create_html(request: Request, db=Depends(get_db)):
 
 
 # TODO - pagination
-@html_router.get("/list", response_class=HTMLResponse)
+@html_router.get("/list")
 def decks_html(request: Request, db=Depends(get_db)):
     decks = list_decks(db=db)
     return jinja_templates.TemplateResponse(
@@ -60,7 +71,7 @@ def decks_html(request: Request, db=Depends(get_db)):
 
 
 # This must be after the static-path routes, lest it take priority over them
-@html_router.get("/{deck_id}", response_class=HTMLResponse)
+@html_router.get("/{deck_id}")
 def deck_html(request: Request, deck_id: str, db=Depends(get_db)):
     deck_info = read_deck(deck_id, db)
     return jinja_templates.TemplateResponse(
