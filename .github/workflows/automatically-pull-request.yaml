@@ -1,0 +1,52 @@
+name: 'Automatically PR'
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  auto_pr:
+    name: 'Auto PR'
+    runs-on: ubuntu-latest
+    steps:
+      # Defaults to checking out the ref that triggered the workflow - i.e. `dev`
+      - uses: actions/checkout@v4
+        # Must do a full-checkout (not shallow) in order for other branches (than that checked-out) to exist (which, in
+        # turn, is necessary in order to create the PR - https://github.com/cli/cli/issues/5896)
+        with:
+          fetch-depth: 0
+
+      - name: Check if PR already exists for this branch
+        id: pr-count
+        # This outputs the count of existing PRs - which, if >0, means this workflow should terminate.
+        # (Cannot set `GH_TOKEN` with `env:` as normally would, since that doesn't carry down into the subshell invoked
+        # by `$(...)`)
+        run: echo 'count=$(GH_TOKEN="${{ secrets.AUTO_PULL_REQUEST_TOKEN }}" gh pr list --head "${{ github.ref_name }}" --base main --json "id" --jq "length")' >> "$GITHUB_OUTPUT"
+
+      - name: Debug output
+        run: echo "${{ steps.pr-count.outputs.count }}"
+
+      # Note must use a different Token, otherwise no GHAs (i.e. no status checks) will run on the resultant PR
+      # (this is to prevent infinite loops). For more info, see
+      # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
+      # (Note that I didn't use that GHA because it suits a different workflow - "in GHA, check out a branch, make
+      # changes to it, then create a PR against the original branch", not "create a PR from one existing branch to
+      # another")
+      - name: Create Pull Request
+        run: gh pr create --base main --head "${{ github.ref_name }}" --fill
+        env:
+          GH_TOKEN: "${{ secrets.AUTO_PULL_REQUEST_TOKEN }}"
+        # Only run if no PRs already exist!
+        if: ${{ steps.pr-count.outputs.count == 0 }}
+
+      # Offer friendly explanation for why no PR was created
+      - name: Explanation
+        run: echo "No PR was created, because one or more already exist"
+        if: ${{ steps.pr-count.outputs.count != 0 }}
+
+      - name: List existing PRs
+        run: gh pr list --head "${{ github.ref_name }}" --base main
+        if: ${{ steps.pr-count.outputs.count != 0 }}
+        env:
+          GH_TOKEN: "${{ secrets.AUTO_PULL_REQUEST_TOKEN }}"
+
