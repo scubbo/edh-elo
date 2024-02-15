@@ -1,5 +1,8 @@
-name: 'Lint and Test'
-on: push
+# Shouldn't really be needed, what with the pre-commit setup (see `DEVELOPMENT.md`) -
+# but, doesn't hurt!
+name: 'Lint And Test'
+on:
+  push:
 
 jobs:
   lint_and_test:
@@ -12,5 +15,7 @@ jobs:
           python-version: '3.x'
           cache: 'pip'
       - run: 'python3 -m pip install -r requirements.txt'
+      - run: 'python3 -m pip install -r requirements-dev.txt'
       - run: 'ruff check .'
+      - run: 'black --check .'
       - run: 'pytest .'

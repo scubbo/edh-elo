@@ -25,7 +25,7 @@ class Deck(Base):
 
 
 class WinType(Base):
-    __tablename__ = 'wintypes'
+    __tablename__ = "wintypes"
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)

@@ -1,0 +1,10 @@
+# Meta tool for running pre-commits
+pre-commit
+
+# Linting
+ruff
+black
+
+# Testing
+httpx
+pytest
