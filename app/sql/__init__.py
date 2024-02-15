@@ -1,6 +1,7 @@
 from . import models
 from .database import SessionLocal
 
+
 def prime_database():
     db = SessionLocal()
     win_types = db.query(models.WinType).all()
