@@ -11,13 +11,13 @@ from ..sql.database import get_db
 
 api_router = APIRouter(prefix="/game", tags=["game"])
 html_router = APIRouter(
-    prefix="/game",
-    include_in_schema=False,
-    default_response_class=HTMLResponse)
+    prefix="/game", include_in_schema=False, default_response_class=HTMLResponse
+)
 
 ########
 # API Routes
 ########
+
 
 @api_router.post("/", response_model=schemas.Game, status_code=201)
 def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
@@ -46,23 +46,29 @@ def delete_game(game_id: str, db=Depends(get_db)):
 # HTML Routes
 ########
 
+
 @html_router.get("/create", response_class=HTMLResponse)
 def game_create_html(request: Request, db=Depends(get_db)):
     players = list_players(db=db)
     return jinja_templates.TemplateResponse(
-        request, "games/create.html", {
+        request,
+        "games/create.html",
+        {
             "players": players,
             # `json.dumps` is necessary because otherwise
             # the keys are surrounded with single-quotes,
             # on which JavaScript's `JSON.parse` will choke.
-            "player_decks": json.dumps({
-                str(player.id): [{
-                    key: getattr(deck, key)
-                    for key in ['id', 'name']
-                } for deck in player.decks]
-                for player in players
-            })
-        })
+            "player_decks": json.dumps(
+                {
+                    str(player.id): [
+                        {key: getattr(deck, key) for key in ["id", "name"]}
+                        for deck in player.decks
+                    ]
+                    for player in players
+                }
+            ),
+        },
+    )
 
 
 # TODO - pagination

@@ -8,9 +8,8 @@ from ..sql.database import get_db
 
 api_router = APIRouter(prefix="/player", tags=["player"])
 html_router = APIRouter(
-    prefix="/player",
-    include_in_schema=False,
-    default_response_class=HTMLResponse)
+    prefix="/player", include_in_schema=False, default_response_class=HTMLResponse
+)
 
 ########
 # API Routes
@@ -44,15 +43,18 @@ def delete_player(player_id: str, db=Depends(get_db)):
 # HTML Routes
 ########
 
+
 @html_router.get("/create")
 def player_create_html(request: Request, db=Depends(get_db)):
     return jinja_templates.TemplateResponse(request, "players/create.html")
+
 
 @html_router.get("/list", response_class=HTMLResponse)
 def player_list_html(request: Request, db=Depends(get_db)):
     players = list_players(db=db)
     return jinja_templates.TemplateResponse(
-        request, "players/list.html", {"players": players})
+        request, "players/list.html", {"players": players}
+    )
 
 
 # This must be after the static-path routes, lest it take priority over them

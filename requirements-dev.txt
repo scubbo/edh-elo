@@ -1,0 +1,7 @@
+# Linting
+ruff
+black
+
+# Testing
+httpx
+pytest

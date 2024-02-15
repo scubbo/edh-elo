@@ -2,10 +2,3 @@ fastapi
 uvicorn
 sqlalchemy
 Jinja2
-
-# Linting
-ruff
-
-# Testing
-httpx
-pytest

@@ -10,14 +10,14 @@ from .players import list_players
 
 api_router = APIRouter(prefix="/deck", tags=["deck"])
 html_router = APIRouter(
-    prefix="/deck",
-    include_in_schema=False,
-    default_response_class=HTMLResponse)
+    prefix="/deck", include_in_schema=False, default_response_class=HTMLResponse
+)
 
 
 ########
 # API Routes
 ########
+
 
 @api_router.post("/", response_model=schemas.Deck, status_code=201)
 def create_deck(deck: schemas.DeckCreate, db: Session = Depends(get_db)):
@@ -52,6 +52,7 @@ def delete_deck(deck_id: str, db=Depends(get_db)):
 ########
 # HTML Routes
 ########
+
 
 @html_router.get("/create")
 def deck_create_html(request: Request, db=Depends(get_db)):
