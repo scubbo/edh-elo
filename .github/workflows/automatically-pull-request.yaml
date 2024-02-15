@@ -21,7 +21,7 @@ jobs:
         # This outputs the count of existing PRs - which, if >0, means this workflow should terminate.
         # (Cannot set `GH_TOKEN` with `env:` as normally would, since that doesn't carry down into the subshell invoked
         # by `$(...)`)
-        run: echo 'count=$(GH_TOKEN="${{ secrets.AUTO_PULL_REQUEST_TOKEN }}" gh pr list --head "${{ github.ref_name }}" --base main --json "id" --jq "length")' >> "$GITHUB_OUTPUT"
+        run: echo "count=$(GH_TOKEN=${{ secrets.AUTO_PULL_REQUEST_TOKEN }} gh pr list --head ${{ github.ref_name }} --base main --json 'id' --jq 'length')" >> "$GITHUB_OUTPUT"
 
       - name: Debug output
         run: echo "${{ steps.pr-count.outputs.count }}"
@@ -38,6 +38,40 @@ jobs:
           GH_TOKEN: "${{ secrets.AUTO_PULL_REQUEST_TOKEN }}"
         # Only run if no PRs already exist!
         if: ${{ steps.pr-count.outputs.count == 0 }}
+
+      # Setting the PR to Auto-Merge requires an ID by which to identify the PR.
+      # In practice, it is overkill to query-all and then sort to get the latest, since GitHub seems to guarantee that
+      # there can only be one PR between any pair of branches at once. But what they hey, it's good Bash practice :P
+      - name: Determine PR ID
+        id: metadata
+        run: |
+          echo "pr_id=$(GH_TOKEN="${{ secrets.AUTO_PULL_REQUEST_TOKEN }}" gh pr list --base main --head "${{ github.ref_name }}" --json 'id,createdAt' --jq 'sort_by(.createdAt) | reverse | .[0].id')\n" >> "$GITHUB_OUTPUT"
+        if: ${{ steps.pr-count.outputs.count == 0 }}
+
+      - name: More debug output
+        run: |
+          echo "${{ steps.metadata.outputs.pr_id }}";
+        if: ${{ steps.pr-count.outputs.count == 0 }}
+
+      # Set the PR to Auto-Merge. So far as I can tell, there's no option to do this directly at creation time.
+      # (Kudos to https://stackoverflow.com/a/72259998/1040915, and absolutely no kudos to GraphQL)
+      - name: Set PR to Auto-Merge
+        run: |
+          gh api graphql -f query='
+            mutation MyMutation {
+              enablePullRequestAutoMerge(input: {pullRequestId: "${{ steps.metadata.outputs.pr_id }}", mergeMethod: SQUASH}) {
+                clientMutationId
+              }
+            }
+          '
+        env:
+          GH_TOKEN: "${{ secrets.AUTO_PULL_REQUEST_TOKEN }}"
+        if: ${{ steps.pr-count.outputs.count == 0 }}
+
+
+      #######
+      # Everything below this point is, effectively, the "else" branch of "if no PR already existed"
+      #######
 
       # Offer friendly explanation for why no PR was created
       - name: Explanation
