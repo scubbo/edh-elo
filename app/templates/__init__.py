@@ -13,5 +13,10 @@ jinja_templates = Jinja2Templates(directory="app/templates")
 # TODO - would this be better as a method on a class extending `db.Model` that the classes in `models.py` could then
 # extend?
 # (Probably not, as we'd still need to explicitly call it - it wouldn't be implicitly called _by_ Flask)
+#
+# (Assumes that this will only be passed lists or objects, not primitives)
 def _jsonify(o):
-    return {k: v for (k, v) in o.__dict__.items() if k != "_sa_instance_state"}
+    if hasattr(o, "__dict__"):
+        return {k: v for (k, v) in o.__dict__.items() if k != "_sa_instance_state"}
+    else:
+        return [_jsonify(e) for e in o]

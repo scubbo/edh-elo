@@ -9,11 +9,12 @@
     <table>
         <tr>
             <th>Date</th>
-            <th>Deck ID 1</th>
+            <th>Decks</th>
+            <th>Winning Deck</th>
         </tr>
         {% for game in games %}
         <tr>
-            <td>{{ game.date }}</td>
+            <td><a href="/game/{{ game.id }}">{{ game.date }}</a></td>
             <td>
                 {{ game.deck_id_1 }}
             </td>

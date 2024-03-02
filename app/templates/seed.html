@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Seeding from files{% endblock %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<h2>Seed from files</h2>
+
+<div>
+    <form action="/api/seed/players" method="post" enctype="multipart/form-data">
+        <label for="file">Upload Players</label>
+        <input type="file" id="file" name="file" accept=".csv"/>
+        <input type="submit">Upload</button>
+    </form>
+</div>
+
+<div>
+    <form action="/api/seed/decks" method="post" enctype="multipart/form-data">
+        <label for="file">Upload Decks</label>
+        <input type="file" id="file" name="file" accept=".csv"/>
+        <input type="submit">Upload</button>
+    </form>
+</div>
+{% endblock %}

@@ -2,4 +2,4 @@
 
 # Idempotent
 source .venv/bin/activate
-uvicorn app:app --reload
+uvicorn app:app --reload --log-config ./local-run-log-config.yaml
