@@ -1,9 +1,14 @@
 import json
+from functional import seq
+from typing import List, Mapping
+
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
+from app.routers.decks import list_decks
+from app.sql import models
 from .players import list_players
 from ..templates import jinja_templates
 from ..sql import crud, schemas
@@ -75,8 +80,27 @@ def game_create_html(request: Request, db=Depends(get_db)):
 @html_router.get("/list")
 def games_html(request: Request, db=Depends(get_db)):
     games = list_games(db=db)
+    decks = list_decks(db=db)
+    decks_by_id = {deck.id: deck for deck in decks}
+    game_names = {game.id: _build_game_deck_names(game, decks_by_id) for game in games}
     return jinja_templates.TemplateResponse(
-        request, "games/list.html", {"games": games}
+        request,
+        "games/list.html",
+        {"games": games, "decks_by_id": decks_by_id, "game_names": game_names},
+    )
+
+
+def _build_game_deck_names(
+    game: models.Game, decks_by_id: Mapping[int, models.Deck]
+) -> List[str]:
+    return (
+        seq(range(6))
+        .map(lambda i: i + 1)
+        .map(lambda i: f"deck_id_{i}")
+        .map(lambda key: getattr(game, key))
+        .filter(lambda x: x)
+        .map(lambda deck_id: decks_by_id[deck_id])
+        .map(lambda deck: deck.name)
     )
 
 

@@ -24,4 +24,12 @@
         <input type="submit">Upload</button>
     </form>
 </div>
+
+<div>
+    <form action="/api/seed/games" method="post" enctype="multipart/form-data">
+        <label for="file">Upload Games</label>
+        <input type="file" id="file" name="file" accept=".csv"/>
+        <input type="submit">Upload</button>
+    </form>
+</div>
 {% endblock %}

@@ -16,7 +16,10 @@
         <tr>
             <td><a href="/game/{{ game.id }}">{{ game.date }}</a></td>
             <td>
-                {{ game.deck_id_1 }}
+                {{ game_names[game.id] | join(", ") }}
+            </td>
+            <td>
+                {{ decks_by_id[game.winning_deck_id].name }}
             </td>
         </tr>
         {% endfor %}

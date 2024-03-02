@@ -55,7 +55,7 @@ def get_games(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_game(db: Session, game: schemas.GameCreate):
-    db_game = models.Game(**game.model_dump)
+    db_game = models.Game(**game.model_dump())
     db.add(db_game)
     db.commit()
     db.refresh(db_game)

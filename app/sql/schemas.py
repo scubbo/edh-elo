@@ -51,10 +51,10 @@ class GameBase(BaseModel):
     date: datetime
     deck_id_1: int
     deck_id_2: int
-    deck_id_3: int
-    deck_id_4: int
-    deck_id_5: int
-    deck_id_6: int
+    deck_id_3: Optional[int] = None
+    deck_id_4: Optional[int] = None
+    deck_id_5: Optional[int] = None
+    deck_id_6: Optional[int] = None
     winning_deck_id: int
     number_of_turns: int
     first_player_out_turn: int

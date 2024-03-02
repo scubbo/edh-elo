@@ -6,7 +6,7 @@
 </head>
 <body>
     <h2>This is the page for game with id {{ game.id }}, played on date {{ game.date }}</h2>
-    {% if deck.description %}
+    {% if game.description %}
     <p>The description of the game is: {{ game.description }}</p>
     {% endif %}
 </body>
