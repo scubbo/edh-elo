@@ -1,10 +1,3 @@
-# Run locally
-
-In increasing complexity:
-
-* `./basic-run.sh` - just raw-dog it
-* `docker compose up --build`
-
 # Pre-commit
 
 This repo uses [pre-commit](https://pre-commit.com/). Install the tool with `pip install pre-commit` (or just `pip install -r requirements-dev.txt`), then install the hooks with `pre-commit install`

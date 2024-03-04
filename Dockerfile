@@ -1,9 +1,5 @@
 # syntax=docker/dockerfile:1
 
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Dockerfile reference guide at
-# https://docs.docker.com/go/dockerfile-reference/
-
 ARG PYTHON_VERSION=3.9.6
 FROM python:${PYTHON_VERSION}-slim as base
 
@@ -36,12 +32,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
-# Switch to the non-privileged user to run the application.
-USER appuser
-
-# Copy the source code into the container.
-COPY . .
-
 # Create writeable directory for database
 USER root
 RUN mkdir database
@@ -49,7 +39,25 @@ RUN chmod 755 database
 RUN chown appuser:appuser database
 USER appuser
 
-# Expose the port that the application listens on.
 EXPOSE 8000
 
+
+########
+# Targets diverge from here
+########
+
+FROM base as prod
+
+COPY . .
 CMD uvicorn app:app --host 0.0.0.0
+
+###
+
+FROM base as dev
+# You probably want sqlite3 to poke around with the database anyway
+USER root
+RUN apt update
+RUN apt install sqlite3
+USER appuser
+# Expects that the source code will be mounted into the container
+CMD uvicorn app:app --reload --host 0.0.0.0
