@@ -2,7 +2,55 @@ import os
 import pathlib
 import pytest
 
+from typing import Callable
+
 from fastapi.testclient import TestClient
+
+
+# https://stackoverflow.com/questions/69281822/how-to-only-run-a-pytest-fixture-cleanup-on-test-error-or-failure,
+# Though syntax appears to have changed
+# https://docs.pytest.org/en/latest/example/simple.html#making-test-result-information-available-in-fixtures
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    # execute all other hooks to obtain the report object
+    outcome = yield
+
+    # set a report attribute for each phase of a call, which can
+    # be "setup", "call", "teardown"
+
+    # TODO - we may care about more than just a binary result!
+    # (i.e. a skipped test is neither passed nor failed...probably?)
+    setattr(
+        item,
+        "rep_" + outcome.get_result().when + "_passed",
+        outcome.get_result().passed,
+    )
+
+
+class Cleanups(object):
+    def __init__(self):
+        self.success_cleanups = []
+        self.failure_cleanups = []
+
+    def add_success(self, success_cleanup: Callable[[], None]):
+        self.success_cleanups.append(success_cleanup)
+
+    def add_failure(self, failure_cleanup: Callable[[], None]):
+        self.failure_cleanups.append(failure_cleanup)
+
+
+@pytest.fixture
+def cleanups(request):
+    cleanups = Cleanups()
+    yield cleanups
+
+    if request.node.rep_call_passed:
+        cleanups = cleanups.success_cleanups
+    else:
+        cleanups = cleanups.failure_cleanups
+    if cleanups:
+        for cleanup in cleanups[::-1]:  # Apply in reverse order
+            cleanup()
 
 
 def prime_database():

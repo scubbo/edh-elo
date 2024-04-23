@@ -60,8 +60,21 @@ $(document).ready(function() {
 
 
     initialize_dropdowns()
-    // TODO - initialize dropdowns
+    
 
     // TODO - submit logic should:
     // * Check that Players are unique
+    $('#submit').click(function() {
+        var data = {
+            'date': $('#date').val(),
+            'deck_id_1': $('#div_for_player_1 select.deck_select').val()
+        }
+        console.log($.ajax({
+            type: 'POST',
+            url: '/api/game/',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json'
+        }))
+    });
 });

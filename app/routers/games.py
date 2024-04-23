@@ -1,4 +1,5 @@
 import json
+import logging
 from functional import seq
 from typing import List, Mapping
 
@@ -10,14 +11,17 @@ from sqlalchemy.orm import Session
 from app.routers.decks import list_decks
 from app.sql import models
 from .players import list_players
-from ..templates import jinja_templates
+from ..elo import rerank
 from ..sql import crud, schemas
 from ..sql.database import get_db
+from ..templates import jinja_templates
 
 api_router = APIRouter(prefix="/game", tags=["game"])
 html_router = APIRouter(
     prefix="/game", include_in_schema=False, default_response_class=HTMLResponse
 )
+
+LOGGER = logging.getLogger(__name__)
 
 ########
 # API Routes
@@ -26,7 +30,29 @@ html_router = APIRouter(
 
 @api_router.post("/", response_model=schemas.Game, status_code=201)
 def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
-    return crud.create_game(db=db, game=game)
+    created_game = crud.create_game(db=db, game=game)
+
+    # Update ELO scores
+    last_score = (
+        db.query(models.EloScore).order_by(models.EloScore.after_game_id.desc()).first()
+    )
+    if last_score:
+        last_scored_game_id = last_score.after_game_id
+    else:
+        last_scored_game_id = 0
+    if create_game.id != last_scored_game_id + 1:
+        # TODO - better error reporting?
+        LOGGER.error(
+            f"Created a game with id {create_game.id}, which is not after the last-scored-game-id {last_scored_game_id}. ELO calculation paused."
+        )
+        return created_game
+
+    deck_ids = [id for id in [getattr(game, f"deck_id_{n+1}") for n in range(6)] if id]
+    print(f"DEBUG - {deck_ids=}")
+    rankings = [crud.get_latest_score_for_deck(deck_id) for deck_id in deck_ids]
+    new_scores = rerank(rankings, deck_ids.index(game.winning_deck_id))
+    print(f"DEBUG - {new_scores=}")
+    return created_game
 
 
 @api_router.get("/list", response_model=list[schemas.Game])

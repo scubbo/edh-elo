@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -47,3 +47,13 @@ class Game(Base):
     first_player_out_turn = Column(Integer, nullable=False)
     win_type_id = Column(Integer, ForeignKey("wintypes.id"), nullable=False)
     description = Column(String)
+
+
+class EloScore(Base):
+    __tablename__ = "elo_scores"
+
+    id = Column(Integer, primary_key=True)
+    # This Elo Score was calculated after the game with this ID
+    after_game_id = Column(Integer, ForeignKey("games.id"))
+    deck_id = Column(Integer, ForeignKey("decks.id"))
+    score = Column(Float(asdecimal=True, decimal_return_scale=3))
