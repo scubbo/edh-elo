@@ -3,6 +3,7 @@
 {% block title %}Seeding from files{% endblock %}
 
 {% block head %}
+{{ super() }}
 
 {% endblock %}
 
@@ -28,6 +29,14 @@
 <div>
     <form action="/api/seed/games" method="post" enctype="multipart/form-data">
         <label for="file">Upload Games</label>
+        <input type="file" id="file" name="file" accept=".csv"/>
+        <input type="submit">Upload</button>
+    </form>
+</div>
+<hr/>
+<div>
+    <form action="/api/seed/all_in_one" method="post" enctype="multipart/form-data">
+        <label for="file">Upload All-in-One</label>
         <input type="file" id="file" name="file" accept=".csv"/>
         <input type="submit">Upload</button>
     </form>

@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
-from ..templates import jinja_templates, _jsonify
+from app.sql import models
+
+from ..templates import jinja_templates
 from ..sql import crud, schemas
 from ..sql.database import get_db
 
@@ -75,8 +78,43 @@ def decks_html(request: Request, db=Depends(get_db)):
 @html_router.get("/{deck_id}")
 def deck_html(request: Request, deck_id: str, db=Depends(get_db)):
     deck_info = read_deck(deck_id, db)
+    deck_score_history = _build_deck_score_history(deck_id, db)
     return jinja_templates.TemplateResponse(
         request,
         "decks/detail.html",
-        {"deck": _jsonify(deck_info), "owner": _jsonify(deck_info.owner)},
+        {
+            "deck": deck_info,
+            "owner": deck_info.owner,
+            "game_history": deck_score_history,
+        },
     )
+
+
+def _build_deck_score_history(deck_id: str, db: Session):
+    # This is...horrible.
+    # But I can't find a way to execute a join _in_ SQLAlchemy in such a way that the response is actual objects rather
+    # than the underlying rows
+    # (https://stackoverflow.com/questions/78596316/)
+    games_involving_this_deck = (
+        db.query(models.Game)
+        .filter(
+            or_(*[getattr(models.Game, f"deck_id_{i+1}") == deck_id for i in range(6)])
+        )
+        .all()
+    )
+    # Having found the games, then add the score for this deck after that game
+    return [
+        {
+            "game": game,
+            "score": db.query(models.EloScore)
+            .filter(
+                and_(
+                    models.EloScore.after_game_id == game.id,
+                    models.EloScore.deck_id == deck_id,
+                )
+            )
+            .first()
+            .score,
+        }
+        for game in games_involving_this_deck
+    ]

@@ -1,4 +1,5 @@
 import json
+import logging
 from functional import seq
 from typing import List, Mapping
 
@@ -10,14 +11,17 @@ from sqlalchemy.orm import Session
 from app.routers.decks import list_decks
 from app.sql import models
 from .players import list_players
-from ..templates import jinja_templates
+from ..elo import rerank
 from ..sql import crud, schemas
 from ..sql.database import get_db
+from ..templates import jinja_templates
 
 api_router = APIRouter(prefix="/game", tags=["game"])
 html_router = APIRouter(
     prefix="/game", include_in_schema=False, default_response_class=HTMLResponse
 )
+
+LOGGER = logging.getLogger(__name__)
 
 ########
 # API Routes
@@ -26,7 +30,36 @@ html_router = APIRouter(
 
 @api_router.post("/", response_model=schemas.Game, status_code=201)
 def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
-    return crud.create_game(db=db, game=game)
+    created_game = crud.create_game(db=db, game=game)
+
+    # Update ELO scores
+    last_score = (
+        db.query(models.EloScore).order_by(models.EloScore.after_game_id.desc()).first()
+    )
+    if last_score:
+        last_scored_game_id = last_score.after_game_id
+    else:
+        last_scored_game_id = 0
+    if created_game.id != last_scored_game_id + 1:
+        # TODO - better error reporting?
+        LOGGER.error(
+            f"Created a game with id {created_game.id}, which is not after the last-scored-game-id {last_scored_game_id}. ELO calculation paused."
+        )
+        return created_game
+
+    deck_ids = [id for id in [getattr(game, f"deck_id_{n+1}") for n in range(6)] if id]
+    deck_scores_before_this_game = [
+        crud.get_latest_score_for_deck(db, deck_id) for deck_id in deck_ids
+    ]
+    new_scores = rerank(
+        deck_scores_before_this_game, deck_ids.index(game.winning_deck_id)
+    )
+    for score, deck_id in zip(new_scores, deck_ids):
+        db.add(
+            models.EloScore(after_game_id=created_game.id, deck_id=deck_id, score=score)
+        )
+        db.commit()
+    return created_game
 
 
 @api_router.get("/list", response_model=list[schemas.Game])
@@ -55,6 +88,7 @@ def delete_game(game_id: str, db=Depends(get_db)):
 @html_router.get("/create", response_class=HTMLResponse)
 def game_create_html(request: Request, db=Depends(get_db)):
     players = list_players(db=db)
+    win_types = db.query(models.WinType).all()
     return jinja_templates.TemplateResponse(
         request,
         "games/create.html",
@@ -72,6 +106,7 @@ def game_create_html(request: Request, db=Depends(get_db)):
                     for player in players
                 }
             ),
+            "win_types": win_types,
         },
     )
 
@@ -80,7 +115,9 @@ def game_create_html(request: Request, db=Depends(get_db)):
 @html_router.get("/list")
 def games_html(request: Request, db=Depends(get_db)):
     games = list_games(db=db)
-    decks = list_decks(db=db)
+    # TODO - a more "data-intensive application" implementation would fetch only the decks involved in the games for
+    # this page
+    decks = list_decks(db=db, limit=-1)
     decks_by_id = {deck.id: deck for deck in decks}
     game_names = {game.id: _build_game_deck_names(game, decks_by_id) for game in games}
     return jinja_templates.TemplateResponse(
@@ -100,14 +137,19 @@ def _build_game_deck_names(
         .map(lambda key: getattr(game, key))
         .filter(lambda x: x)
         .map(lambda deck_id: decks_by_id[deck_id])
-        .map(lambda deck: deck.name)
+        .map(lambda deck: {"owner": deck.owner.name, "name": deck.name, "id": deck.id})
     )
 
 
 # This must be after the static-path routes, lest it take priority over them
 @html_router.get("/{game_id}")
 def game_html(request: Request, game_id: str, db=Depends(get_db)):
-    game_info = read_game(game_id, db)
+    game = read_game(game_id, db)
+
+    decks = list_decks(db=db, limit=-1)
+    decks_by_id = {deck.id: deck for deck in decks}
+    game_deck_names = _build_game_deck_names(game, decks_by_id)
+
     return jinja_templates.TemplateResponse(
-        request, "games/detail.html", {"game": game_info}
+        request, "games/detail.html", {"game": game, "game_deck_names": game_deck_names}
     )

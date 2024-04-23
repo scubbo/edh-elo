@@ -1,13 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Deck - {{ deck.name }}</title>
-</head>
-<body>
-    <h2>This is the page for deck {{ deck.name }} with id {{ deck.id }}, owned by {{ owner.name }}</h2>
-    {% if deck.description %}
-    <p>The description of the deck is: {{ deck.description }}</p>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Deck - {{ deck.name }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h2>This is the page for deck {{ deck.name }} with id {{ deck.id }}, owned by <a href="/player/{{ owner.id }}">{{ owner.name }}</a></h2>
+
+{% if deck.description %}
+<p>The description of the deck is: {{ deck.description }}</p>
+{% endif %}
+
+<h2>Game history</h2>
+{% if game_history %}
+(TODO - extract a translation-from-deckid-to-names method)
+(Or...just link them as a relationship/ForeignKey)
+<table>
+    <tr>
+        <th>Date</th>
+        <th>Participants</th>
+        <th>Result</th>
+        <th>ELO Score</th>
+    </tr>
+    {% for entry in game_history %}
+    <tr>
+        <td><a href="/game/{{ entry.game.id }}">{{ entry.game.date.strftime('%Y-%m-%d') }}</a></td>
+        <td>
+            {% for participant_id in range(6) %}
+            {% set deck_id = entry.game['deck_id_' ~ (participant_id+1)] %}
+            {% if deck_id is not none %}
+            <a href="/deck/{{ deck_id }}">{{ deck_id }}</a>
+            {% endif %}
+            {% endfor %}</td>
+        <td>{{ "Win" if entry.game.winning_deck_id == deck.id else "Loss" }}</td>
+        <td>{{ entry.score|int }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>This Deck has not played any games</p>
+{% endif %}
+{% endblock %}

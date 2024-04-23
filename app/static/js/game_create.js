@@ -21,6 +21,7 @@ function change_player(eventData) {
     console.log(deck_select);
 
     const target_val = parseInt(target.val());
+    // Populate the per-player deck-choices
     if (target_val == -1) {
         deck_select.hide();
     } else {
@@ -40,28 +41,70 @@ function change_player(eventData) {
         player_decks = player_deck_data[target_val.toString()];
         actual_select = $(deck_select[0]);
         actual_select.empty();
-        actual_select.append('<option val="-1">Select Deck...</option>');
+        actual_select.append('<option value="-1">Select Deck...</option>');
         for (deck of player_decks) {
-            actual_select.append(`<option val="${deck.id}">${deck.name}</option>`);
+            actual_select.append(`<option value="${deck.id}">${deck.name}</option>`);
         }
         // Just in case it's been previously hidden
         actual_select.show();
-        
     }
-}
 
-function initialize_dropdowns() {
-    console.log('TODO - initialize dropdowns');
+    // Update the "winning player" dropdown
+    $('#winning_player_id').empty();
+    $('.player_select').each(function () {
+        if ($(this).val() != -1) {
+            $('#winning_player_id').append(
+                $('<option></option>')
+                    .attr('value', $(this).val())
+                    .text($(this).children("option:selected").text())
+            )
+        }
+    });
+
+
 }
 
 $(document).ready(function() {
     $('#number_of_players').on("change", change_num_players)
     $('.player_select').on("change", change_player)
+    
+    $('#submit').click(function() {
+        var data = {
+            'date': $('#date').val(),
+            'number_of_turns': $('#number_of_turns').val(),
+            'first_player_out_turn': $('#first_player_out_turn').val(),
+            'win_type_id': $('#win_type_id').val(),
+            'description': $('#description').val()
+        }
+        winning_player_id = $('#winning_player_id option:selected').attr('value');
+        data['winning_deck_id'] = getDeckForPlayerId(winning_player_id);
 
+        for (i=0; i<$('#number_of_players').val(); i++) {
+            data['deck_id_' + (i+1)] = $('#div_for_player_' + (i+1) + ' .deck_select option:selected').attr('value');
+        }
 
-    initialize_dropdowns()
-    // TODO - initialize dropdowns
-
-    // TODO - submit logic should:
-    // * Check that Players are unique
+        $.ajax({
+            type: 'POST',
+            url: '/api/game/',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function(data) {
+                window.location.href = '/game/' + data.id;
+            }
+        });
+    });
 });
+
+function getDeckForPlayerId(player_id) {
+    mapped = $('.player_div').map(function() {
+        return {
+            'player_id': $(this).find('.player_select option:selected').attr('value'),
+            'deck_id': $(this).find('.deck_select option:selected').attr('value')
+        }
+    })
+
+    filtered = mapped.filter((_, data) => parseInt(parseInt(data['player_id'])) == player_id)
+
+    return filtered[0]['deck_id'];
+}

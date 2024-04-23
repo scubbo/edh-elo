@@ -8,7 +8,7 @@ from app import app
 client = TestClient(app)
 
 
-def test_add_and_retrieve_player(test_client: TestClient):
+def test_add_and_retrieve_player(test_client: TestClient, cleanups):
     response = _json_get(test_client, "/player/1")
     assert response.status_code == 404
 
@@ -18,13 +18,14 @@ def test_add_and_retrieve_player(test_client: TestClient):
     response_1 = _json_get(client, "/player/1")
     assert response_1.json()["name"] == "jason"
 
-    # Cleanup
-    # TODO - put this in a finally clause (or similar as provided by pytest)
-    delete_response = _json_delete(client, "/player/1")
-    assert delete_response.status_code == 204
+    def cleanup():
+        delete_response = _json_delete(client, "/player/1")
+        assert delete_response.status_code == 204
+
+    cleanups.add_success(cleanup)
 
 
-def test_add_and_retrieve_deck(test_client: TestClient):
+def test_add_and_retrieve_deck(test_client: TestClient, cleanups):
     not_found_response = _json_get(test_client, "/deck/1")
     assert not_found_response.status_code == 404
 
@@ -52,11 +53,13 @@ def test_add_and_retrieve_deck(test_client: TestClient):
 
     # Very basic HTML testing
     html_response = test_client.get(f"/deck/{deck_id}")
-    assert "owned by jim" in html_response.text
+    assert """owned by <a href="/player/1">jim</a>""" in html_response.text
 
-    # Cleanup
-    delete_response = _json_delete(test_client, f"/deck/{deck_id}")
-    assert delete_response.status_code == 204
+    def success_cleanup():
+        delete_response = _json_delete(test_client, f"/deck/{deck_id}")
+        assert delete_response.status_code == 204
+
+    cleanups.add_success(success_cleanup)
 
 
 def _json_get(c: TestClient, path: str) -> httpx.Response:

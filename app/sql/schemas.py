@@ -59,6 +59,7 @@ class GameBase(BaseModel):
     number_of_turns: int
     first_player_out_turn: int
     win_type_id: int
+    format_id: int
     description: str
 
 
@@ -70,3 +71,12 @@ class Game(GameBase):
     id: int
 
     model_config = {"from_attributes": True}
+
+
+# No need for an EloScoreBase because this will never be created via API - it's only ever calculated internally.
+class EloScore(BaseModel):
+    id: int
+    after_game_id: int
+    on_date: datetime
+    deck_id: int
+    score: float

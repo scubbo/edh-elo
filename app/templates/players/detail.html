@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Player - {{ player.name }}</title>
-</head>
-<body>
-    <h2>This is the page for player {{ player.name }} who has id {{ player.id }}</h2>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Player - {{ player.name }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h2>This is the page for player {{ player.name }} who has id {{ player.id }}</h2>
+
+{% if decks %}
+<h2>Decks</h2>
+<ul>
+{% for deck in decks %}
+<li><a href="/deck/{{ deck.id }}">{{ deck.name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

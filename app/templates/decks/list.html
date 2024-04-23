@@ -1,24 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Decks</title>
-</head>
-<body>
-    <h1>Decks</h1>
-    <table>
-        <tr>
-            <th>Deck Name</th>
-            <th>Owner</th>
-        </tr>
-        {% for deck in decks %}
-        <tr>
-            <td>
-                <a href="/deck/{{ deck.id }}">{{ deck.name }}</a>
-            </td>
-            <td>{{ deck.owner.name }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Decks{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h1>Decks</h1>
+<table>
+    <tr>
+        <th>Deck Name</th>
+        <th>Owner</th>
+    </tr>
+    {% for deck in decks %}
+    <tr>
+        <td>
+            <a href="/deck/{{ deck.id }}">{{ deck.name }}</a>
+        </td>
+        <td>{{ deck.owner.name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
