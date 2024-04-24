@@ -21,6 +21,7 @@ function change_player(eventData) {
     console.log(deck_select);
 
     const target_val = parseInt(target.val());
+    // Populate the per-player deck-choices
     if (target_val == -1) {
         deck_select.hide();
     } else {
@@ -46,8 +47,21 @@ function change_player(eventData) {
         }
         // Just in case it's been previously hidden
         actual_select.show();
-        
     }
+
+    // Update the "winning player" dropdown
+    $('#winning_player_id').empty();
+    $('.player_select').each(function () {
+        if ($(this).val() != -1) {
+            $('#winning_player_id').append(
+                $('<option></option>')
+                    .attr('value', $(this).val())
+                    .text($(this).children("option:selected").text())
+            )
+        }
+    });
+
+
 }
 
 function initialize_dropdowns() {
@@ -69,6 +83,7 @@ $(document).ready(function() {
             'date': $('#date').val(),
             'deck_id_1': $('#div_for_player_1 select.deck_select').val()
         }
+
         console.log($.ajax({
             type: 'POST',
             url: '/api/game/',
