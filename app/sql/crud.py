@@ -78,11 +78,15 @@ def get_latest_score_for_deck(db: Session, deck_id: int):
         db.query(models.EloScore)
         .filter(models.EloScore.deck_id == deck_id)
         .order_by(models.EloScore.after_game_id.desc())
+        .all()
     )
     if scores:
         return scores[0]
     else:
-        return None
+        # Really we could pick any value as the initial rating for an as-yet-unplayed deck -
+        # scores are all relative, not absolutely, so any value would be appropriate!
+        # This was chosen just because it's a nice round number :)
+        return 1000
 
 
 def get_all_scores_for_deck(db: Session, deck_id: int):

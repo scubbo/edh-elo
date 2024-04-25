@@ -33,9 +33,22 @@
 </div>
 {% endfor %}
 
+<label for="winning_player_id">Winning Player:</label>
 <select id="winning_player_id" name="winning_player_id">
     <option disabled selected value> -- select an option -- </option>
-</select>
+</select><br/>
+
+<label for="win_type_id">Win Type:</label>
+<select id="win_type_id" name="win_type_id">
+    {% for win_type in win_types %}
+    <option value="{{ win_type.id }}">{{ win_type.name }}</option>
+    {% endfor %}
+</select><br/>
+<label for="number_of_turns">Number Of Turns:</label><input type="number" name="number_of_turns" id="number_of_turns"/><br/>
+<label for="first_player_out_turn">Turn First Player Out:</label><input type="number" name="first_player_out_turn" id="first_player_out_turn"/><br/>
+
+<label for="description">Description:</label>
+<input type="textarea" id="description" name="description"/>
 
 <input type="button" id="submit" value="Submit"/>
 {% endblock %}

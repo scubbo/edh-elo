@@ -40,16 +40,16 @@ def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
         last_scored_game_id = last_score.after_game_id
     else:
         last_scored_game_id = 0
-    if create_game.id != last_scored_game_id + 1:
+    if created_game.id != last_scored_game_id + 1:
         # TODO - better error reporting?
         LOGGER.error(
-            f"Created a game with id {create_game.id}, which is not after the last-scored-game-id {last_scored_game_id}. ELO calculation paused."
+            f"Created a game with id {created_game.id}, which is not after the last-scored-game-id {last_scored_game_id}. ELO calculation paused."
         )
         return created_game
 
     deck_ids = [id for id in [getattr(game, f"deck_id_{n+1}") for n in range(6)] if id]
     print(f"DEBUG - {deck_ids=}")
-    rankings = [crud.get_latest_score_for_deck(deck_id) for deck_id in deck_ids]
+    rankings = [crud.get_latest_score_for_deck(db, deck_id) for deck_id in deck_ids]
     new_scores = rerank(rankings, deck_ids.index(game.winning_deck_id))
     print(f"DEBUG - {new_scores=}")
     return created_game
@@ -81,6 +81,7 @@ def delete_game(game_id: str, db=Depends(get_db)):
 @html_router.get("/create", response_class=HTMLResponse)
 def game_create_html(request: Request, db=Depends(get_db)):
     players = list_players(db=db)
+    win_types = db.query(models.WinType).all()
     return jinja_templates.TemplateResponse(
         request,
         "games/create.html",
@@ -98,6 +99,7 @@ def game_create_html(request: Request, db=Depends(get_db)):
                     for player in players
                 }
             ),
+            "win_types": win_types,
         },
     )
 

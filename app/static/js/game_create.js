@@ -41,9 +41,9 @@ function change_player(eventData) {
         player_decks = player_deck_data[target_val.toString()];
         actual_select = $(deck_select[0]);
         actual_select.empty();
-        actual_select.append('<option val="-1">Select Deck...</option>');
+        actual_select.append('<option value="-1">Select Deck...</option>');
         for (deck of player_decks) {
-            actual_select.append(`<option val="${deck.id}">${deck.name}</option>`);
+            actual_select.append(`<option value="${deck.id}">${deck.name}</option>`);
         }
         // Just in case it's been previously hidden
         actual_select.show();
@@ -64,24 +64,24 @@ function change_player(eventData) {
 
 }
 
-function initialize_dropdowns() {
-    console.log('TODO - initialize dropdowns');
-}
-
 $(document).ready(function() {
     $('#number_of_players').on("change", change_num_players)
     $('.player_select').on("change", change_player)
-
-
-    initialize_dropdowns()
     
-
-    // TODO - submit logic should:
-    // * Check that Players are unique
     $('#submit').click(function() {
         var data = {
             'date': $('#date').val(),
-            'deck_id_1': $('#div_for_player_1 select.deck_select').val()
+            'number_of_turns': $('#number_of_turns').val(),
+            'first_player_out_turn': $('#first_player_out_turn').val(),
+            'win_type_id': $('#win_type_id').val(),
+            'description': $('#description').val()
+        }
+        winning_player_id = $('#winning_player_id').val()
+        
+        data['winning_deck_id'] = getDeckForPlayerId(winning_player_id);
+
+        for (i=0; i<$('#number_of_players').val(); i++) {
+            data['deck_id_' + (i+1)] = getDeckForPlayerId(i+1);
         }
 
         console.log($.ajax({
@@ -93,3 +93,10 @@ $(document).ready(function() {
         }))
     });
 });
+
+function getDeckForPlayerId(player_id) {
+    console.log('getting deck for player ' + player_id)
+    retVal = $('#div_for_player_' + player_id + ' .deck_select option:selected').attr('value');
+    console.log(retVal);
+    return retVal
+}

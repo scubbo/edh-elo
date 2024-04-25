@@ -12,8 +12,10 @@
 - [X] CRUD APIs for Games
 - [ ] HTML Page to Create Game
   - Mostly done, just need to implement actual submission, (if desired) deck-creation in-page, and non-deck metadata (who won, turn count, etc.).
-- [ ] Load Game-history from file
+- [X] Load Game-history from file
 - [ ] Favicon
+- [ ] Configuration per-stage (including different welcome screen)
+- [ ] Welcome page
 ...
 - [ ] Authentication (will need to link `user` table to `player`)
 ...
@@ -54,3 +56,11 @@ https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-yo
 * ~~How to specify the content-type that should be sent with a Swagger request without needing to use `requestBody` (and thus, implying that there _should_ be a body)?~~
   * Fixed by using FastApi instead of Flask
 * How to abstract out the standard-definitions of `routers/*` and `sql/crud.py`?
+
+# Known bugs/QA issues
+
+* It's possible to select the same player twice for a game
+* Can submit a game in the future
+* "Turn First Player Out" can be more than "Number Of Turns"
+* No validation that you've actually selected a deck for a player.
+* 404 pages are not friendly
