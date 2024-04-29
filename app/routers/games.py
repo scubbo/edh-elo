@@ -49,9 +49,16 @@ def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
 
     deck_ids = [id for id in [getattr(game, f"deck_id_{n+1}") for n in range(6)] if id]
     print(f"DEBUG - {deck_ids=}")
-    rankings = [crud.get_latest_score_for_deck(db, deck_id) for deck_id in deck_ids]
-    new_scores = rerank(rankings, deck_ids.index(game.winning_deck_id))
-    print(f"DEBUG - {new_scores=}")
+    deck_scores_before_this_game = [
+        crud.get_latest_score_for_deck(db, deck_id) for deck_id in deck_ids
+    ]
+    new_scores = rerank(
+        deck_scores_before_this_game, deck_ids.index(game.winning_deck_id)
+    )
+    for score, deck_id in zip(new_scores, deck_ids):
+        db.add(
+            models.EloScore(after_game_id=created_game.id, deck_id=deck_id, score=score)
+        )
     return created_game
 
 

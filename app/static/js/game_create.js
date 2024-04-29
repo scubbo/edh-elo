@@ -76,27 +76,35 @@ $(document).ready(function() {
             'win_type_id': $('#win_type_id').val(),
             'description': $('#description').val()
         }
-        winning_player_id = $('#winning_player_id').val()
-        
+        winning_player_id = $('#winning_player_id option:selected').attr('value');
         data['winning_deck_id'] = getDeckForPlayerId(winning_player_id);
 
         for (i=0; i<$('#number_of_players').val(); i++) {
-            data['deck_id_' + (i+1)] = getDeckForPlayerId(i+1);
+            data['deck_id_' + (i+1)] = $('#div_for_player_' + (i+1) + ' .deck_select option:selected').attr('value');
         }
 
-        console.log($.ajax({
+        $.ajax({
             type: 'POST',
             url: '/api/game/',
             data: JSON.stringify(data),
             contentType: 'application/json',
-            dataType: 'json'
-        }))
+            dataType: 'json',
+            success: function(data) {
+                window.location.href = '/game/' + data.id;
+            }
+        });
     });
 });
 
 function getDeckForPlayerId(player_id) {
-    console.log('getting deck for player ' + player_id)
-    retVal = $('#div_for_player_' + player_id + ' .deck_select option:selected').attr('value');
-    console.log(retVal);
-    return retVal
+    mapped = $('.player_div').map(function() {
+        return {
+            'player_id': $(this).find('.player_select option:selected').attr('value'),
+            'deck_id': $(this).find('.deck_select option:selected').attr('value')
+        }
+    })
+
+    filtered = mapped.filter((_, data) => parseInt(parseInt(data['player_id'])) == player_id)
+
+    return filtered[0]['deck_id'];
 }
