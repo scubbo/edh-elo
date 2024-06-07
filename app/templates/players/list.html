@@ -1,20 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Players</title>
-</head>
-<body>
-    <h1>Players</h1>
-    <table>
-        <tr>
-            <th>Name</th>
-        </tr>
-        {% for player in players %}
-        <tr>
-            <td><a href="/player/{{ player.id }}">{{ player.name }}</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Players{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h1>Players</h1>
+<table>
+    <tr>
+        <th>Name</th>
+    </tr>
+    {% for player in players %}
+    <tr>
+        <td><a href="/player/{{ player.id }}">{{ player.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

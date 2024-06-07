@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Game - {{ game.id }}</title>
-</head>
-<body>
-    <h2>This is the page for game with id {{ game.id }}, played on date {{ game.date }}</h2>
-    {% if game.description %}
-    <p>The description of the game is: {{ game.description }}</p>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Game - {{ game.id }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h2>This is the page for game with id {{ game.id }}, played on date {{ game.date }}</h2>
+{% if game.description %}
+<p>The description of the game is: {{ game.description }}</p>
+{% endif %}
+{% endblock %}

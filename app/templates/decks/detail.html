@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Deck - {{ deck.name }}</title>
-</head>
-<body>
-    <h2>This is the page for deck {{ deck.name }} with id {{ deck.id }}, owned by {{ owner.name }}</h2>
-    {% if deck.description %}
-    <p>The description of the deck is: {{ deck.description }}</p>
-    {% endif %}
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Deck - {{ deck.name }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h2>This is the page for deck {{ deck.name }} with id {{ deck.id }}, owned by {{ owner.name }}</h2>
+{% if deck.description %}
+<p>The description of the deck is: {{ deck.description }}</p>
+{% endif %}
+{% endblock %}

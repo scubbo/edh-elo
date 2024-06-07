@@ -59,6 +59,7 @@ def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
         db.add(
             models.EloScore(after_game_id=created_game.id, deck_id=deck_id, score=score)
         )
+        db.commit()
     return created_game
 
 

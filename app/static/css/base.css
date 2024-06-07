@@ -1,0 +1,48 @@
+body {
+    margin: 0;
+}
+
+#header {
+    background-color: #0080ff;
+    min-height: 40px;
+    width: 100%;
+    color: #ddd;
+    text-shadow: 2px 2px #555;
+}
+
+#header div {
+    float: left
+}
+
+#header a {
+  color: inherit;
+  text-decoration: none;
+  -moz-transition: all .2s ease-in;
+  -o-transition: all .2s ease-in;
+  -webkit-transition: all .2s ease-in;
+  transition: all .2s ease-in;
+}
+
+#header a {
+    /* margin: 0; */
+    line-height: 40px;
+}
+
+#header a:hover {
+    color: #00c;
+}
+
+#header #header_main_anchor {
+    min-height: 40px;
+    width: 100px;
+    padding: 0px 20px;
+    text-align: center;
+}
+
+#header #topbar {
+    margin-left: 20px;
+}
+
+.topbar_item {
+    margin: 0px 10px;
+}

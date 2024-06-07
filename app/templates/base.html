@@ -7,9 +7,20 @@
         src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/css/base.css"/>
     {% endblock %}
 </head>
 <body>
+    <div id="header">
+        <div id="header_main_anchor">
+            <a id="main_anchor" href="/">EDH ELO</a>
+        </div>
+        <div id="topbar">
+            <a class="topbar_item" href="/game/list">Games</a>
+            <a class="topbar_item" href="/deck/list">Decks</a>
+            <a class="topbar_item" href="/player/list">Players</a>
+        </div>
+    </div>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">
         {% block footer %}

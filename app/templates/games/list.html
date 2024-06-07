@@ -1,28 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Games</title>
-</head>
-<body>
-    <h1>Games</h1>
-    <table>
-        <tr>
-            <th>Date</th>
-            <th>Decks</th>
-            <th>Winning Deck</th>
-        </tr>
-        {% for game in games %}
-        <tr>
-            <td><a href="/game/{{ game.id }}">{{ game.date }}</a></td>
-            <td>
-                {{ game_names[game.id] | join(", ") }}
-            </td>
-            <td>
-                {{ decks_by_id[game.winning_deck_id].name }}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Games{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h1>Games</h1>
+<table>
+<tr>
+    <th>Date</th>
+    <th>Decks</th>
+    <th>Winning Deck</th>
+</tr>
+{% for game in games %}
+<tr>
+    <td><a href="/game/{{ game.id }}">{{ game.date }}</a></td>
+    <td>
+        {{ game_names[game.id] | join(", ") }}
+    </td>
+    <td>
+        {{ decks_by_id[game.winning_deck_id].name }}
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
