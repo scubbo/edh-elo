@@ -1,5 +1,7 @@
+from typing import List
+
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 
 from .database import Base
 
@@ -47,13 +49,14 @@ class Game(Base):
     first_player_out_turn = Column(Integer, nullable=False)
     win_type_id = Column(Integer, ForeignKey("wintypes.id"), nullable=False)
     description = Column(String)
+    elo_scores: Mapped[List["EloScore"]] = relationship()
 
 
 class EloScore(Base):
     __tablename__ = "elo_scores"
 
     id = Column(Integer, primary_key=True)
-    # This Elo Score was calculated after the game with this ID
-    after_game_id = Column(Integer, ForeignKey("games.id"))
+    # This Elo Score was calculated after this game
+    after_game_id: Mapped[int] = Column(Integer, ForeignKey("games.id"))
     deck_id = Column(Integer, ForeignKey("decks.id"))
     score = Column(Float(asdecimal=True, decimal_return_scale=3))

@@ -74,14 +74,10 @@ def delete_game_by_id(db: Session, game_id: int):
 
 
 def get_latest_score_for_deck(db: Session, deck_id: int):
-    scores = (
-        db.query(models.EloScore)
-        .filter(models.EloScore.deck_id == deck_id)
-        .order_by(models.EloScore.after_game_id.desc())
-        .all()
-    )
+    scores = get_all_scores_for_deck(db, deck_id)
+
     if scores:
-        return scores[0]
+        return scores[0].score
     else:
         # Really we could pick any value as the initial rating for an as-yet-unplayed deck -
         # scores are all relative, not absolutely, so any value would be appropriate!
@@ -92,6 +88,8 @@ def get_latest_score_for_deck(db: Session, deck_id: int):
 def get_all_scores_for_deck(db: Session, deck_id: int):
     return (
         db.query(models.EloScore)
+        .join(models.Game)
         .filter(models.EloScore.deck_id == deck_id)
-        .order_by(models.EloScore.after_game_id)
+        .order_by(models.Game.id.desc())
+        .all()
     )

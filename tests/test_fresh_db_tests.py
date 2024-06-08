@@ -53,7 +53,7 @@ def test_add_and_retrieve_deck(test_client: TestClient, cleanups):
 
     # Very basic HTML testing
     html_response = test_client.get(f"/deck/{deck_id}")
-    assert "owned by jim" in html_response.text
+    assert """owned by <a href="/player/1">jim</a>""" in html_response.text
 
     def success_cleanup():
         delete_response = _json_delete(test_client, f"/deck/{deck_id}")

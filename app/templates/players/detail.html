@@ -8,4 +8,13 @@
 
 {% block content %}
 <h2>This is the page for player {{ player.name }} who has id {{ player.id }}</h2>
+
+{% if decks %}
+<h2>Decks</h2>
+<ul>
+{% for deck in decks %}
+<li><a href="/deck/{{ deck.id }}">{{ deck.name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
 {% endblock %}

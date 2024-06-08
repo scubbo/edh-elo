@@ -34,7 +34,10 @@ def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
 
     # Update ELO scores
     last_score = (
-        db.query(models.EloScore).order_by(models.EloScore.after_game_id.desc()).first()
+        db.query(models.EloScore)
+        .join(models.Game)
+        .order_by(models.Game.id.desc())
+        .first()
     )
     if last_score:
         last_scored_game_id = last_score.after_game_id

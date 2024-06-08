@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
+from app.sql import models
+
 from ..templates import jinja_templates
 from ..sql import crud, schemas
 from ..sql.database import get_db
@@ -61,6 +63,10 @@ def player_list_html(request: Request, db=Depends(get_db)):
 @html_router.get("/{player_id}")
 def player_html(request: Request, player_id: str, db=Depends(get_db)):
     player_info = read_player(player_id, db)
+    # TODO - Is it bad practice to pull database-accessing code into this layer?
+    # On the one hand, it's obviously mixing levels.
+    # ON the other, feels weird to implement a `get_decks_for_player` method to be used in exactly one place.
+    decks = db.query(models.Deck).filter(models.Deck.owner_id == player_id).all()
     return jinja_templates.TemplateResponse(
-        request, "players/detail.html", {"player": player_info}
+        request, "players/detail.html", {"player": player_info, "decks": decks}
     )
