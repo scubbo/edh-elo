@@ -82,7 +82,7 @@ def get_latest_score_for_deck(db: Session, deck_id: int):
         # Really we could pick any value as the initial rating for an as-yet-unplayed deck -
         # scores are all relative, not absolutely, so any value would be appropriate!
         # This was chosen just because it's a nice round number :)
-        return 1000
+        return 1000.0
 
 
 def get_all_scores_for_deck(db: Session, deck_id: int):

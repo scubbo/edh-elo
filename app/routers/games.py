@@ -34,10 +34,7 @@ def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
 
     # Update ELO scores
     last_score = (
-        db.query(models.EloScore)
-        .join(models.Game)
-        .order_by(models.Game.id.desc())
-        .first()
+        db.query(models.EloScore).order_by(models.EloScore.after_game_id.desc()).first()
     )
     if last_score:
         last_scored_game_id = last_score.after_game_id
@@ -51,7 +48,6 @@ def create_game(game: schemas.GameCreate, db: Session = Depends(get_db)):
         return created_game
 
     deck_ids = [id for id in [getattr(game, f"deck_id_{n+1}") for n in range(6)] if id]
-    print(f"DEBUG - {deck_ids=}")
     deck_scores_before_this_game = [
         crud.get_latest_score_for_deck(db, deck_id) for deck_id in deck_ids
     ]
@@ -119,7 +115,9 @@ def game_create_html(request: Request, db=Depends(get_db)):
 @html_router.get("/list")
 def games_html(request: Request, db=Depends(get_db)):
     games = list_games(db=db)
-    decks = list_decks(db=db)
+    # TODO - a more "data-intensive application" implementation would fetch only the decks involved in the games for
+    # this page
+    decks = list_decks(db=db, limit=-1)
     decks_by_id = {deck.id: deck for deck in decks}
     game_names = {game.id: _build_game_deck_names(game, decks_by_id) for game in games}
     return jinja_templates.TemplateResponse(

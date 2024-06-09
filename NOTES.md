@@ -10,12 +10,15 @@
 - [X] Swagger API
 - [ ] Local development tool to clear/seed database
 - [X] CRUD APIs for Games
-- [ ] HTML Page to Create Game
+- [X] HTML Page to Create Game
   - Mostly done, just need to implement actual submission, (if desired) deck-creation in-page, and non-deck metadata (who won, turn count, etc.).
 - [X] Load Game-history from file
 - [ ] Favicon
 - [ ] Configuration per-stage (including different welcome screen)
 - [ ] Welcome page
+- [ ] "Display components" like "a tables of games" that can be inserted into multiple pages
+  * Oh no, did I just re-invent React? :P
+  - [ ] Data presentation methods like "translating a list of Deck IDs into Deck Names"
 ...
 - [ ] Authentication (will need to link `user` table to `player`)
 ...

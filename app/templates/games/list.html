@@ -16,7 +16,7 @@
 </tr>
 {% for game in games %}
 <tr>
-    <td><a href="/game/{{ game.id }}">{{ game.date }}</a></td>
+    <td><a href="/game/{{ game.id }}">{{ game.date.strftime('%Y-%m-%d') }}</a></td>
     <td>
         {{ game_names[game.id] | join(", ") }}
     </td>

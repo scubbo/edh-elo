@@ -59,6 +59,7 @@ class GameBase(BaseModel):
     number_of_turns: int
     first_player_out_turn: int
     win_type_id: int
+    format_id: int
     description: str
 
 

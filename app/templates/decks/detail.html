@@ -26,7 +26,7 @@
     </tr>
     {% for entry in game_history %}
     <tr>
-        <td><a href="/game/{{ entry.game.id }}">{{ entry.game.date }}</a></td>
+        <td><a href="/game/{{ entry.game.id }}">{{ entry.game.date.strftime('%Y-%m-%d') }}</a></td>
         <td>
             {% for participant_id in range(6) %}
             {% set deck_id = entry.game['deck_id_' ~ (participant_id+1)] %}
