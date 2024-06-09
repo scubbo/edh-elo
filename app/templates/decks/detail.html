@@ -35,7 +35,7 @@
             {% endif %}
             {% endfor %}</td>
         <td>{{ "Win" if entry.game.winning_deck_id == deck.id else "Loss" }}</td>
-        <td>{{ entry.score }}</td>
+        <td>{{ entry.score|int }}</td>
     </tr>
     {% endfor %}
 </table>
