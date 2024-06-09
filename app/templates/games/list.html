@@ -18,7 +18,11 @@
 <tr>
     <td><a href="/game/{{ game.id }}">{{ game.date.strftime('%Y-%m-%d') }}</a></td>
     <td>
-        {{ game_names[game.id] | join(", ") }}
+        <ul>
+        {% for deck in game_names[game.id] %}
+        <li><a href="/deck/{{ deck.id }}">{{ deck.owner }} ({{ deck.name }})</a></li>
+        {% endfor %}
+        </ul>
     </td>
     <td>
         {{ decks_by_id[game.winning_deck_id].name }}

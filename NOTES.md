@@ -15,7 +15,7 @@
 - [X] Load Game-history from file
 - [ ] Favicon
 - [ ] Configuration per-stage (including different welcome screen)
-- [ ] Welcome page
+- [ ] Welcome/About page
 - [ ] "Display components" like "a tables of games" that can be inserted into multiple pages
   * Oh no, did I just re-invent React? :P
   - [ ] Data presentation methods like "translating a list of Deck IDs into Deck Names"
@@ -24,26 +24,8 @@
 ...
 - [ ] Helm chart including an initContainer to create the database if it doesn't exist already
 - [ ] GroupId (i.e. so I can host other people's data? That's _probably_ a YAGNI - see if there's demand!)
-
-
-# Tables
-
-Tables:
-* Decks
-  * Name
-  * Description
-  * Owner
-  * DecklistId (optional)
-* Players (not the same as Users! Can model a Player who is not a User)
-* Users
-  * Standard auth stuff
-* Games
-  * Date
-  * Location
-  * DeckIds (array)
-  * WinningDeckId
-  * FinalTurnNum
-  * Notes
+...
+- [ ] Comments/chats on Games?
 
 # Database Migrations
 
@@ -64,6 +46,7 @@ https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-yo
 
 * It's possible to select the same player twice for a game
 * Can submit a game in the future
+  * ELO calculation assumes that games are submitted in chronological order
 * "Turn First Player Out" can be more than "Number Of Turns"
 * No validation that you've actually selected a deck for a player.
 * 404 pages are not friendly

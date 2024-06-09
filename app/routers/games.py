@@ -137,14 +137,19 @@ def _build_game_deck_names(
         .map(lambda key: getattr(game, key))
         .filter(lambda x: x)
         .map(lambda deck_id: decks_by_id[deck_id])
-        .map(lambda deck: deck.name)
+        .map(lambda deck: {"owner": deck.owner.name, "name": deck.name, "id": deck.id})
     )
 
 
 # This must be after the static-path routes, lest it take priority over them
 @html_router.get("/{game_id}")
 def game_html(request: Request, game_id: str, db=Depends(get_db)):
-    game_info = read_game(game_id, db)
+    game = read_game(game_id, db)
+
+    decks = list_decks(db=db, limit=-1)
+    decks_by_id = {deck.id: deck for deck in decks}
+    game_deck_names = _build_game_deck_names(game, decks_by_id)
+
     return jinja_templates.TemplateResponse(
-        request, "games/detail.html", {"game": game_info}
+        request, "games/detail.html", {"game": game, "game_deck_names": game_deck_names}
     )

@@ -7,7 +7,13 @@
 {% endblock %}
 
 {% block content %}
-<h2>This is the page for game with id {{ game.id }}, played on date {{ game.date }}</h2>
+<h2>This is the page for game with id {{ game.id }}, played on date {{ game.date.strftime('%Y-%m-%d') }}</h2>
+<h2>Participants</h2>
+<ul>
+    {% for deck in game_deck_names %}
+    <li><a href="/deck/{{ deck.id }}">{{ deck.owner }} ({{ deck.name }})</a></li>
+    {% endfor %}
+</ul>
 {% if game.description %}
 <p>The description of the game is: {{ game.description }}</p>
 {% endif %}
