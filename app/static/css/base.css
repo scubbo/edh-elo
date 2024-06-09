@@ -46,3 +46,21 @@ body {
 .topbar_item {
     margin: 0px 10px;
 }
+
+#header div#create_game_button {
+    float: right;
+    margin-right: 15px;
+}
+
+a#create_game_link {
+    display:block;
+    text-shadow: none;
+    color: #222;
+    background-color: lightgreen;
+    height: 25px;
+    line-height: 27px;
+    margin-top: 5px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    
+}
