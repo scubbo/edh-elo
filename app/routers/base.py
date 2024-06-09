@@ -14,3 +14,8 @@ def main(request: Request, db=Depends(get_db)):
     return jinja_templates.TemplateResponse(
         request, "/main.html", {"games": _jsonify(games)}
     )
+
+
+@html_router.get("/about")
+def about(request: Request, db=Depends(get_db)):
+    return jinja_templates.TemplateResponse(request, "/about.html")

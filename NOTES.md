@@ -15,7 +15,8 @@
 - [X] Load Game-history from file
 - [ ] Favicon
 - [ ] Configuration per-stage (including different welcome screen)
-- [ ] Welcome/About page
+- [X] More content on Home Page
+- [X] About Page
 - [ ] "Display components" like "a tables of games" that can be inserted into multiple pages
   * Oh no, did I just re-invent React? :P
   - [ ] Data presentation methods like "translating a list of Deck IDs into Deck Names"

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}EDH ELO - About{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<p>
+    This app is a score-tracker for an EDH/Commander group. Initial motivation was to provide
+    <a href="https://en.wikipedia.org/wiki/Elo_rating_system"></a> Elo scoring for the decks, but other planned
+    functionality includes:</p>
+<ul>
+    <li>Authentication - limiting so that only a given player can create their decks, and allowing admins to edit/delete data</li>
+    <li>Comments on games</li>
+    <li>Integration with external services, including Moxfield and Archidekt to ingest decklists, <a href="https://edhrec.com/top/salt">Salt scores</a>, etc.</li>
+    <li>More-nuanced statistics (for decks and players), including recommendations of which decks would be a good match-up,
+        or which feasible match-ups haven't yet occurred</li>
+</ul>
+
+<p>
+    (This is only listing user-facing functionality - there are also plenty of technical or QA considerations that I'd
+    like to add! See the <a href="https://github.com/scubbo/edh-elo/blob/placeholder/NOTES.md">GitHub Repo</a> for more
+    details)
+</p>
+
+<p>
+    As you can probably tell, this app is currently in a "pre-alpha" state, with minimal functionality and cosmetic
+    considerations so as to just get something in front of users. 
+</p>
+<p>
+    HUGE thanks to my friend Patrick for getting a jump-start on data-tracking, so that 1. I had some data to work with,
+    and 2. I had inspiration to keep working on this project.
+</p>
+{% endblock %}

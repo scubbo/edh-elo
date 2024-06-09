@@ -64,3 +64,29 @@ a#create_game_link {
     border-radius: 10px;
     
 }
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 40px;
+    line-height: 40px;
+    width: 100%;
+    background-color: #0007ee;
+    color: lightgrey;
+    text-align: center;
+}
+
+footer a {
+    color: lightgrey;
+}
+
+footer #about {
+    float: left;
+    margin-left: 10px;
+}
+
+footer #credits {
+    float: right;
+    margin-right: 10px;
+}
