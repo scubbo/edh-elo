@@ -26,12 +26,12 @@
     </tr>
     {% for entry in game_history %}
     <tr>
-        <td>{{ entry.game.date }}</td>
+        <td><a href="/game/{{ entry.game.id }}">{{ entry.game.date }}</a></td>
         <td>
             {% for participant_id in range(6) %}
             {% set deck_id = entry.game['deck_id_' ~ (participant_id+1)] %}
             {% if deck_id is not none %}
-            {{ deck_id }}
+            <a href="/deck/{{ deck_id }}">{{ deck_id }}</a>
             {% endif %}
             {% endfor %}</td>
         <td>{{ "Win" if entry.game.winning_deck_id == deck.id else "Loss" }}</td>
